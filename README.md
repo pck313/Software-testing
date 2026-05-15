@@ -3,6 +3,7 @@ Chú thích:
 Chạy thư mục LRU.
 
 Cấu trúc thư mục:
+		
 		algorithm.py: chứa thuật toán LRU; 
 		
 		algorithm_buggy.py: chứa chương trình lỗi; 
