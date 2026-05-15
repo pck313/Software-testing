@@ -13,3 +13,5 @@ Cấu trúc thư mục:
 Sau khi CodeRabbit review 1 lần, phải chờ 1 tiếng thì mới review lần 2. 
 
 CodeRabbit chỉ review những chỗ vừa commit. 
+
+Có thể chạy python main.py để xem giao diện chương trình.
