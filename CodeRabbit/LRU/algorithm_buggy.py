@@ -43,7 +43,7 @@ def lru_page_replacement(pages, capacity):
             frames[0] = page
 
         # cập nhật thời gian dùng gần nhất
-        last_used[page] = time + 1
+        last_used[page] = time + 2
 
         history.append({
             "page": page,
