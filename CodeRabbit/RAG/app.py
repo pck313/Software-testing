@@ -64,7 +64,7 @@ llm = ChatGoogleGenerativeAI(
 
     model="gemini-2.5-flash",
 
-    google_api_key="Nhập api key vào đây",
+    google_api_key="AIzaSyCm1WNXjeJcdnlAprG2HRPNMODjNppSBvc",
 
     temperature=0
 
