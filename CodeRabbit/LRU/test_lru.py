@@ -2,6 +2,7 @@ from algorithm import lru_page_replacement
 
 def test_functional_basic_lru():
     pages = [1, 2, 3, 1, 4, 5]
+    
     capacity = 3
 
     history, faults = lru_page_replacement(pages, capacity)

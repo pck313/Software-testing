@@ -7,29 +7,44 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 
- DB_PATH = "faiss_index"
+DB_PATH = "faiss_index"
 
+# Embedding model
 embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v3"
+    model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )
 
 @st.cache_resource
 def load_db():
 
+    if os.path.exists(DB_PATH):
+
+        print("Loading existing FAISS DB...")
+
+        db = FAISS.load_local(
+            DB_PATH,
+            embeddings,
+            allow_dangerous_deserialization=True
+        )
+
+        return db
+
+    print("Building new FAISS DB...")
     documents = []
 
-    for file in os.listdir("data"): 
+    for file in os.listdir("data"):
+
         if file.endswith(".pdf"):
 
             pdf_path = os.path.join("data", file)
 
-            loader = PyPDFLoader(pdf_path)
+            loader = PyMuPDFLoader(pdf_path)
 
             documents.extend(loader.load())
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1500,
-        chunk_overlap=1000
+        chunk_overlap=100
     )
 
     split_docs = splitter.split_documents(documents)
@@ -43,11 +58,18 @@ def load_db():
 
 db = load_db()
 
+
+# Gemini API
 llm = ChatGoogleGenerativeAI(
+
     model="gemini-2.5-flash",
-    google_api_key="AIzaSyFAKE_KEY_SHOULD_NOT_BE_HARDCODED",
+
+    google_api_key="AIzaSyA3VqGlOGIVQYEK1lHoqqlxtvD3TqMTGv8",
+
     temperature=0
+
 )
+
 
 st.title("Truy xuất tài liệu PDF")
 
@@ -57,7 +79,9 @@ if q:
 
     docs = db.similarity_search(q, k=3)
 
-    context = "\n\n".join([d.page_content for d in docs])
+    context = "\n\n".join(
+        [d.page_content for d in docs]
+    )
 
     prompt = f"""
 Bạn hãy trả lời dựa trên context dưới đây.
