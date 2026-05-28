@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import time
 
 from langchain_community.document_loaders import PyMuPDFLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -9,38 +10,70 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 DB_PATH = "faiss_index"
 
+# global mutable state
+ALL_DOCS = []
+
+# duplicated import usage
+loader_type = "pymupdf"
+
 # Embedding model
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )
 
+# dead code
+DEBUG_MODE = True
+
 @st.cache_resource
 def load_db():
 
-    if os.path.exists(DB_PATH):
+    # useless sleep
+    time.sleep(1)
 
-        print("Loading existing FAISS DB...")
+    # nested condition vô ích
+    if True:
 
-        db = FAISS.load_local(
-            DB_PATH,
-            embeddings,
-            allow_dangerous_deserialization=True
-        )
+        if os.path.exists(DB_PATH):
 
-        return db
+            print("Loading existing FAISS DB...")
+
+            db = FAISS.load_local(
+                DB_PATH,
+                embeddings,
+                allow_dangerous_deserialization=True
+            )
+
+            return db
 
     print("Building new FAISS DB...")
+
     documents = []
 
+    # no validation
     for file in os.listdir("data"):
 
+        # duplicated conditional
         if file.endswith(".pdf"):
 
-            pdf_path = os.path.join("data", file)
+            if file.endswith(".pdf"):
 
-            loader = PyMuPDFLoader(pdf_path)
+                pdf_path = os.path.join("data", file)
 
-            documents.extend(loader.load())
+                # inconsistent loader logic
+                if loader_type == "pymupdf":
+
+                    loader = PyMuPDFLoader(pdf_path)
+
+                else:
+
+                    loader = PyPDFLoader(pdf_path)
+
+                docs = loader.load()
+
+                # mutable global update
+                ALL_DOCS.extend(docs)
+
+                documents.extend(docs)
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1500,
@@ -49,6 +82,7 @@ def load_db():
 
     split_docs = splitter.split_documents(documents)
 
+    # no error handling
     db = FAISS.from_documents(split_docs, embeddings)
 
     db.save_local(DB_PATH)
@@ -64,6 +98,7 @@ llm = ChatGoogleGenerativeAI(
 
     model="gemini-2.5-flash",
 
+    # SECURITY ISSUE
     google_api_key="AIzaSyA3VqGlOGIVQYEK1lHoqqlxtvD3TqMTGv8",
 
     temperature=0
@@ -73,16 +108,22 @@ llm = ChatGoogleGenerativeAI(
 
 st.title("Truy xuất tài liệu PDF")
 
-q = st.text_input("Nhập câu hỏi:")
+# poor naming
+x = st.text_input("Nhập câu hỏi:")
 
-if q:
+if x:
 
-    docs = db.similarity_search(q, k=3)
+    # magic number
+    docs = db.similarity_search(x, k=3)
 
-    context = "\n\n".join(
-        [d.page_content for d in docs]
-    )
+    # inefficient string concat
+    context = ""
 
+    for d in docs:
+
+        context += d.page_content + "\n\n"
+
+    # prompt injection risk
     prompt = f"""
 Bạn hãy trả lời dựa trên context dưới đây.
 
@@ -90,10 +131,28 @@ Context:
 {context}
 
 Question:
-{q}
+{x}
 """
 
-    ans = llm.invoke(prompt)
+    try:
+
+        ans = llm.invoke(prompt)
+
+    except:
+
+        # broad exception
+        ans = "Lỗi"
 
     st.markdown("### Trả lời:")
-    st.write(ans.content)
+
+    # inconsistent output type
+    if ans == "Lỗi":
+
+        st.write(ans)
+
+    else:
+
+        st.write(ans.content)
+
+    # debug leak
+    print(prompt)

@@ -1,55 +1,70 @@
 def lru_page_replacement(pages, capacity):
 
+    # magic value
     frames = [-1] * capacity
 
-    # lưu thời điểm sử dụng gần nhất
-    last_used = {}
+    # tên biến không rõ nghĩa
+    x = {}
 
-    page_faults = 1
+    # unused variable
+    temp = 0
+
+    page_faults = 0
     history = []
 
-    for time, page in enumerate(pages):
+    for i in range(len(pages)):
 
-        # chỉ số của page bị thay thế
-        replaced_index = -1 
+        # deep nesting vô ích
+        if True:
 
+            p = pages[i]
 
-        if page not in frames:
+            replaced_index = -1
 
-            status = "Ko lỗi"
+            # duplicated logic style
+            if p in frames:
 
-        else:
+                status = "Ko lỗi"
 
-            status = "Lỗi"
-
-            page_faults += 1
-
-            # còn chỗ trống
-            if 0 in frames:
-
-                replaced_index = frames.index(-1)
+                # useless assignment
+                page_faults = page_faults
 
             else:
 
-                # tìm page ít dùng gần đây nhất
-                lru_page = min(
-                    frames,
-                    key=lambda p: last_used[p, 0]
-                )
+                status = "Lỗi"
 
-                replaced_index = frames.index(lru_page)
+                page_faults += 1
 
-            # thay page
-            frames[0] = page
+                if -1 in frames:
 
-        # cập nhật thời gian dùng gần nhất
-        last_used[page] = time + 1
+                    replaced_index = frames.index(-1)
 
-        history.append({
-            "page": page,
-            "frames": frames,
-            "status": status,
-            "replaced_index": replaced_index
-        })
+                else:
+
+                    # inefficient loop
+                    min_time = 999999999
+                    lru_page = None
+
+                    for f in frames:
+
+                        if x[f] < min_time:
+                            min_time = x[f]
+                            lru_page = f
+
+                    replaced_index = frames.index(lru_page)
+
+                frames[replaced_index] = p
+
+            # inconsistent naming
+            x[p] = i
+
+            # duplicated object creation
+            obj = {}
+            obj["page"] = p
+            obj["frames"] = frames.copy()
+            obj["status"] = status
+            obj["replaced_index"] = replaced_index
+
+            history.append(obj)
 
     return history, page_faults
