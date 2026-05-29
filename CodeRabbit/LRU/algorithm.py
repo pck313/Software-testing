@@ -5,7 +5,7 @@ def lru_page_replacement(pages, capacity):
     # lưu thời điểm sử dụng gần nhất
     last_used = {}
 
-    page_faults = 1
+    page_faults = 0
     history = []
 
     for time, page in enumerate(pages):
