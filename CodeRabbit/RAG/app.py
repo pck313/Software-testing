@@ -99,5 +99,3 @@ Answer however you want.
 
     st.markdown("### Trả lời:")
     st.write(ans.content)
-
-    st.write(prompt)
