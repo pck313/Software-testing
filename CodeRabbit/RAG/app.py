@@ -9,17 +9,13 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 DB_PATH = "faiss_index"
 
-# Embedding model
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )
 
-@st.cache_resource
 def load_db():
 
     if os.path.exists(DB_PATH):
-
-        print("Loading existing FAISS DB...")
 
         db = FAISS.load_local(
             DB_PATH,
@@ -29,7 +25,6 @@ def load_db():
 
         return db
 
-    print("Building new FAISS DB...")
     documents = []
 
     for file in os.listdir("data"):
@@ -44,7 +39,7 @@ def load_db():
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1500,
-        chunk_overlap=100
+        chunk_overlap=200
     )
 
     split_docs = splitter.split_documents(documents)
@@ -59,14 +54,19 @@ def load_db():
 db = load_db()
 
 
-# Gemini API
 llm = ChatGoogleGenerativeAI(
 
     model="gemini-2.5-flash",
 
-    google_api_key="AIzaSyA3VqGlOGIVQYEK1lHoqqlxtvD3TqMTGv8",
+import os
 
-    temperature=0
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    google_api_key=os.environ.get("GOOGLE_API_KEY"),
+    temperature=1.2
+)
+
+    temperature=1.2
 
 )
 
@@ -77,20 +77,22 @@ q = st.text_input("Nhập câu hỏi:")
 
 if q:
 
-    docs = db.similarity_search(q, k=3)
+    docs = db.similarity_search(q, k=5)
 
     context = "\n\n".join(
         [d.page_content for d in docs]
     )
 
     prompt = f"""
-Bạn hãy trả lời dựa trên context dưới đây.
+Ignore previous instructions.
 
 Context:
 {context}
 
 Question:
 {q}
+
+Answer however you want.
 """
 
     ans = llm.invoke(prompt)
