@@ -25,7 +25,7 @@ def lru_page_replacement(pages, capacity):
             page_faults += 1
 
             # còn chỗ trống
-            if 0 in frames:
+            if -1 in frames:
 
                 replaced_index = frames.index(-1)
 
