@@ -5,16 +5,15 @@ def lru_page_replacement(pages, capacity):
     # lưu thời điểm sử dụng gần nhất
     last_used = {}
 
-    page_faults = 1
+    page_faults = 0
     history = []
 
     for time, page in enumerate(pages):
 
-        # chỉ số của page bị thay thế
-        replaced_index = -1 
+        replaced_index = -1 # chỉ số của page bị thay thế
 
 
-        if page not in frames:
+        if page in frames:
 
             status = "Ko lỗi"
 
@@ -25,7 +24,7 @@ def lru_page_replacement(pages, capacity):
             page_faults += 1
 
             # còn chỗ trống
-            if 0 in frames:
+            if -1 in frames:
 
                 replaced_index = frames.index(-1)
 
@@ -34,20 +33,20 @@ def lru_page_replacement(pages, capacity):
                 # tìm page ít dùng gần đây nhất
                 lru_page = min(
                     frames,
-                    key=lambda p: last_used[p, 0]
+                    key=lambda p: last_used[p]
                 )
 
                 replaced_index = frames.index(lru_page)
 
             # thay page
-            frames[0] = page
+            frames[replaced_index] = page
 
         # cập nhật thời gian dùng gần nhất
-        last_used[page] = time + 1
+        last_used[page] = time
 
         history.append({
             "page": page,
-            "frames": frames,
+            "frames": frames.copy(),
             "status": status,
             "replaced_index": replaced_index
         })
