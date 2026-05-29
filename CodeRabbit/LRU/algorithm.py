@@ -40,7 +40,7 @@ def lru_page_replacement(pages, capacity):
                 replaced_index = frames.index(lru_page)
 
             # thay page
-            frames[0] = page
+            frames[replaced_index] = page
 
         # cập nhật thời gian dùng gần nhất
         last_used[page] = time + 1
