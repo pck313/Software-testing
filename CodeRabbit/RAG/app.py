@@ -38,8 +38,8 @@ def load_db():
             documents.extend(loader.load())
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=10000,
-        chunk_overlap=5000
+        chunk_size=1500,
+        chunk_overlap=200
     )
 
     split_docs = splitter.split_documents(documents)
