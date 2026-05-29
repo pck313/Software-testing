@@ -15,6 +15,14 @@ embeddings = HuggingFaceEmbeddings(
 
 def load_db():
 
+    """
+    Load a FAISS vector store from DB_PATH if present; otherwise build one from all `.pdf` files in the `data/` directory and persist it to DB_PATH.
+    
+    This function searches the local filesystem for an existing FAISS index at DB_PATH and loads it if found. If no index exists, it loads every `.pdf` file from the `data/` directory, splits their text into document chunks, creates a FAISS index using the module-level `embeddings`, saves the index to DB_PATH, and returns it.
+    
+    Returns:
+        FAISS: The loaded or newly created FAISS vector store instance.
+    """
     if os.path.exists(DB_PATH):
 
         db = FAISS.load_local(

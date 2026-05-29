@@ -1,5 +1,22 @@
 def lru_page_replacement(pages, capacity):
 
+    """
+    Simulates an LRU (Least Recently Used) page replacement process over a sequence of page references.
+    
+    Parameters:
+        pages (iterable): Sequence of page identifiers (hashable) to be processed in order.
+        capacity (int): Number of frame slots available.
+    
+    Returns:
+        tuple: A pair (history, page_faults) where:
+            - history (list): A list of per-reference dictionaries with keys:
+                - "page": the referenced page identifier,
+                - "frames": the current frames list,
+                - "status": a string indicating the outcome for the reference,
+                - "replaced_index": index of the frame that was replaced or -1 if none.
+              Note: each history entry stores the frames list object as-is (not a defensive copy).
+            - page_faults (int): Total count of page faults observed during the simulation.
+    """
     frames = [-1] * capacity
 
     # lưu thời điểm sử dụng gần nhất
