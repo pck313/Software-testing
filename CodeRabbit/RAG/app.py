@@ -77,7 +77,7 @@ q = st.text_input("Nhập câu hỏi:")
 
 if q:
 
-    docs = db.similarity_search(q, k=50)
+    docs = db.similarity_search(q, k=5)
 
     context = "\n\n".join(
         [d.page_content for d in docs]
