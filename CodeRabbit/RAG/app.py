@@ -58,7 +58,13 @@ llm = ChatGoogleGenerativeAI(
 
     model="gemini-2.5-flash",
 
-    google_api_key="AIzaSyA3VqGlOGIVQYEK1lHoqqlxtvD3TqMTGv8",
+import os
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    google_api_key=os.environ.get("GOOGLE_API_KEY"),
+    temperature=1.2
+)
 
     temperature=1.2
 
